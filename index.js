@@ -26,7 +26,18 @@ const config = require("./config.json");
 
     await page.waitForSelector("#content");
 
-    await page.screenshot({ path: "example.png", fullPage: true });
+    let bodyPart = await page.evaluate(() => {
+      return document.querySelector(".sqs-block-content > h1").textContent;
+    });
+
+    let workout = await page.evaluate(() => {
+      return document.querySelector(".sqs-block-content > p:nth-child(2)")
+        .textContent;
+    });
+
+    console.log(bodyPart + "\n" + workout);
+
+    // await page.screenshot({ path: "example.png", fullPage: true });
   } else {
     throw new Error("Link not found");
   }
