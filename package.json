@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,6 +19,12 @@
   },
   "homepage": "https://github.com/ekwon86/swolebuddy#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "mongoose": "^5.4.0",
     "puppeteer": "^1.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
   }
 }
