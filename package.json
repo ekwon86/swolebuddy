@@ -20,8 +20,10 @@
   "homepage": "https://github.com/ekwon86/swolebuddy#readme",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "dateformat": "^3.0.3",
     "express": "^4.16.4",
     "mongoose": "^5.4.0",
+    "node-cron": "^2.0.3",
     "puppeteer": "^1.11.0"
   },
   "devDependencies": {
