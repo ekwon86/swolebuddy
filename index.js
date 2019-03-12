@@ -1,46 +1,41 @@
-const puppeteer = require("puppeteer");
-const config = require("./config.json");
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const path = require("path");
+const cron = require("node-cron");
+const swole = require("./swole");
+const workouts = require("./routes/api/workouts");
 
-(async () => {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.setViewport({ width: 1280, height: 800 });
-  await page.goto(
-    "https://www.thequadguy.com/features?bnc=1&rsn=noOb&fromProt=&lng="
-  );
-  await page.focus("#Sentry_email");
-  await page.keyboard.type(config.testing.email);
+const app = express();
 
-  await page.focus("#Sentry_password");
-  await page.keyboard.type(config.testing.password);
+// cron.schedule(
+// "0 12 * * *",
+// () => {
+// swole.getWorkout();
+// },
+// {
+// scheduled: true,
+// timezone: "America/Los_Angeles"
+// }
+// );
 
-  await page.click("#Sentry_button");
+console.log(swole.getWorkout());
 
-  await page.waitForSelector("#folderNav");
+// Body Parser Middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-  const linkHandlers = await page.$x("//a[contains(text(), 'THE DAILY PUMP')]");
+// DB Config
+const db = require("./config/keys").mongoURI;
 
-  if (linkHandlers.length > 0) {
-    console.log("Link found");
-    await linkHandlers[0].click();
+// Connect to MongoDB
+mongoose
+  .connect(db)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
 
-    await page.waitForSelector("#content");
+// Use routes
+app.use("/api/workouts", workouts);
 
-    let bodyPart = await page.evaluate(() => {
-      return document.querySelector(".sqs-block-content > h1").textContent;
-    });
-
-    let workout = await page.evaluate(() => {
-      return document.querySelector(".sqs-block-content > p:nth-child(2)")
-        .textContent;
-    });
-
-    console.log(bodyPart + "\n" + workout);
-
-    // await page.screenshot({ path: "example.png", fullPage: true });
-  } else {
-    throw new Error("Link not found");
-  }
-
-  await browser.close();
-})();
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`Server is running on port: ${port}`));
