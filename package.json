@@ -20,6 +20,7 @@
   "homepage": "https://github.com/ekwon86/swolebuddy#readme",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
     "dateformat": "^3.0.3",
     "express": "^4.16.4",
     "mongoose": "^5.4.0",

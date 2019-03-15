@@ -9,6 +9,9 @@ const WorkoutSchema = new Schema({
   workout: {
     type: String
   },
+  imgUrl: {
+    type: String
+  },
   date: {
     type: Date,
     default: Date.now

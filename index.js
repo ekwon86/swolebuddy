@@ -1,4 +1,5 @@
 const express = require("express");
+const router = express.Router();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const path = require("path");
@@ -9,15 +10,18 @@ const devices = require("puppeteer/DeviceDescriptors");
 const iPhone = devices["iPhone X"];
 const config = require("./config.json");
 const dateFormat = require("dateformat");
+const cors = require("cors");
 
-const MongoClient = require("mongodb").MongoClient;
-const url = "mongodb://localhost:27017/";
+// Bring in Workout Model
+const Workout = require("./models/Workout");
 
 const app = express();
 
+app.use(cors());
+
 // cron.schedule(
-// "0 12 * * *",
-// () => {
+//   "0 12 * * *",
+//   () => {
 (async () => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
@@ -60,28 +64,25 @@ const app = express();
 
   await workoutContent.screenshot({ path: imgPath });
 
-  await MongoClient.connect(url, function(err, db) {
-    if (err) throw err;
-    let dbo = db.db("swolebuddy");
-    let myObj = {
-      bodypart: bodyPart,
-      workout: workout,
-      date: date
-    };
+  const newWorkout = new Workout({
+    bodypart: bodyPart,
+    workout: workout,
+    imgUrl: imgPath,
+    date: date
+  });
 
-    dbo.collection("workouts").insertOne(myObj, function(err, res) {
-      if (err) throw err;
-      db.close();
-    });
+  await newWorkout.save(function(err, workout) {
+    if (err) return console.error(err);
+    console.log(workout.bodypart + " saved to the workout collection");
   });
 
   await await browser.close();
 })();
-// },
-// {
-// scheduled: true,
-// timezone: "America/Los_Angeles"
-// }
+//   },
+//   {
+//     scheduled: true,
+//     timezone: "America/Los_Angeles"
+//   }
 // );
 
 // Body Parser Middleware
