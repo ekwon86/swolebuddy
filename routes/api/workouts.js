@@ -24,12 +24,23 @@ router.get("/", (req, res) => {
 // @route   GET api/workouts/:id
 // @desc    Get workout by ID
 // @access  Public
-router.get("/:id", (req, res) => {
+router.get("/getworkout/:id", (req, res) => {
   Workout.findById(req.params.id)
     .then(workout => res.json(workout))
     .catch(err =>
       res.status(404).json({ noworkoutfound: "No workout found with that ID" })
     );
+});
+
+// @route   GET api/workouts/:id
+// @desc    Get workout by ID
+// @access  Public
+router.get("/todaysworkout", (req, res) => {
+  Workout.findOne()
+    .sort({ date: -1 })
+    .limit(1)
+    .then(workout => res.json(workout))
+    .catch(err => res.status(404).json({ noworkoutfound: "No workout found" }));
 });
 
 // @route   DELETE api/workouts/:id
